@@ -1,88 +1,75 @@
-import tkinter as tk
-from tkinter import messagebox
-import time
+from kivy.app import App
+from kivy.uix.boxlayout import BoxLayout
+from kivy.uix.label import Label
+from kivy.uix.textinput import TextInput
+from kivy.uix.button import Button
+from kivy.uix.popup import Popup
+from kivy.clock import Clock
+from kivy.core.window import Window
 
-# إعداد النافذة الرئيسية للتطبيق
-app = tk.Tk()
-app.title("تطبيق الهكر الأخلاقي المتطور")
-app.geometry("400x550")
-app.config(bg="#0b0f19") # خلفية داكنة احترافية
+Window.clearcolor = (0.043, 0.058, 0.098, 1)
 
-# عنوان التطبيق
-title_label = tk.Label(
-    app, 
-    text=" نظام اختراق الهواتف المتطور ", 
-    fg="#00ffcc", 
-    bg="#0b0f19", 
-    font=("Arial", 14, "bold")
-)
-title_label.pack(pady=20)
 
-# حقل إدخال رقم الهاتف
-phone_label = tk.Label(
-    app, 
-    text="أدخل رقم الهاتف المستهدف:", 
-    fg="#ffffff", 
-    bg="#0b0f19", 
-    font=("Arial", 10, "bold")
-)
-phone_label.pack(anchor="w", padx=30)
+class HackApp(App):
+    def build(self):
+        self.title = "تطبيق الهكر الأخلاقي المتطور"
+        main_layout = BoxLayout(orientation='vertical', padding=[20, 30, 20, 30], spacing=15)
 
-phone_entry = tk.Entry(
-    app, 
-    width=28, 
-    font=("Arial", 14), 
-    bg="#1a2238", 
-    fg="#00ffcc", 
-    insertbackground="white"
-)
-phone_entry.pack(pady=10, padx=30)
+        title = Label(text="[b]نظام اختراق الهواتف المتطور[/b]", color=(0, 1, 0.8, 1),
+                      font_size='18sp', markup=True, size_hint=(1, 0.15))
+        main_layout.add_widget(title)
 
-# صندوق عرض الحالة أو السجل
-status_box = tk.Text(
-    app, 
-    height=8, 
-    width=32, 
-    bg="#121826", 
-    fg="#00ffcc", 
-    font=("Courier", 10)
-)
-status_box.pack(pady=10)
-status_box.insert(tk.END, "[ النظام جاهز في انتظار الهدف... ]\n")
+        phone_label = Label(text="أدخل رقم الهاتف المستهدف:", color=(1, 1, 1, 1),
+                            font_size='14sp', size_hint=(1, 0.08))
+        main_layout.add_widget(phone_label)
 
-# الدالة اللي بتشتغل لما ندوس على زر الاختراق
-def run_hack():
-    target = phone_entry.get()
-    if target == "":
-        messagebox.showerror("خطأ", "برجاء كتابة رقم الهاتف أولاً!")
-    else:
-        status_box.delete("1.0", tk.END)
-        status_box.insert(tk.END, f"[*] جاري الاتصال بالرقم: {target}\n")
-        app.update()
-        
-        time.sleep(0.5)
-        status_box.insert(tk.END, "[+] يتم تجاوز جدار الحماية...\n")
-        app.update()
-        
-        time.sleep(0.5)
-        status_box.insert(tk.END, "[+] تم سحب الثغرات بنجاح!\n")
-        app.update()
-        
-        time.sleep(0.5)
-        status_box.insert(tk.END, "[✔] الحالة: تم الاختراق بنجاح! 😎\n")
-        messagebox.showinfo("نجاح العملية", f"تم اختراق الجهاز {target} بنجاح تام!")
+        self.phone_entry = TextInput(multiline=False, font_size='16sp',
+                                     background_color=(0.1, 0.13, 0.22, 1),
+                                     foreground_color=(0, 1, 0.8, 1),
+                                     cursor_color=(1, 1, 1, 1),
+                                     size_hint=(1, 0.12), input_filter='int')
+        main_layout.add_widget(self.phone_entry)
 
-# زر بدء الاختراق الرئيسي
-hack_button = tk.Button(
-    app, 
-    text="بدء عملية الاختراق ⚡", 
-    bg="#ff0055", 
-    fg="white", 
-    font=("Arial", 12, "bold"),
-    width=24,
-    command=run_hack
-)
-hack_button.pack(pady=20)
+        self.status_box = TextInput(text="[ النظام جاهز في انتظار الهدف... ]\n",
+                                    readonly=True, multiline=True, font_size='12sp',
+                                    background_color=(0.07, 0.09, 0.15, 1),
+                                    foreground_color=(0, 1, 0.8, 1),
+                                    size_hint=(1, 0.35))
+        main_layout.add_widget(self.status_box)
 
-# تشغيل التطبيق
-app.mainloop()
+        hack_button = Button(text="بدء عملية الاختراق ⚡",
+                             background_color=(1, 0, 0.33, 1),
+                             font_size='16sp', size_hint=(1, 0.15), bold=True)
+        hack_button.bind(on_press=self.run_hack)
+        main_layout.add_widget(hack_button)
+
+        return main_layout
+
+    def run_hack(self, instance):
+        target = self.phone_entry.text.strip()
+        if target == "":
+            self.show_popup("خطأ", "برجاء كتابة رقم الهاتف أولاً!")
+            return
+        self.status_box.text = f"[*] جاري الاتصال بالرقم: {target}\n"
+        Clock.schedule_once(lambda dt: self.append_status("[+] يتم تجاوز جدار الحماية...\n"), 0.5)
+        Clock.schedule_once(lambda dt: self.append_status("[+] تم سحب الثغرات بنجاح!\n"), 1.0)
+        Clock.schedule_once(lambda dt: self.append_status("[✔] الحالة: تم الاختراق بنجاح! 😎\n"), 1.5)
+        Clock.schedule_once(lambda dt: self.show_popup("نجاح العملية", f"تم اختراق الجهاز {target} بنجاح!"), 2.0)
+
+    def append_status(self, text):
+        self.status_box.text += text
+
+    def show_popup(self, title, message):
+        content = BoxLayout(orientation='vertical', padding=10, spacing=10)
+        content.add_widget(Label(text=message, color=(1, 1, 1, 1), font_size='14sp'))
+        btn = Button(text="حسناً", size_hint=(1, 0.4), background_color=(1, 0, 0.33, 1))
+        content.add_widget(btn)
+        popup = Popup(title=title, content=content, size_hint=(0.85, 0.4),
+                      title_color=(0, 1, 0.8, 1),
+                      background_color=(0.07, 0.09, 0.15, 1))
+        btn.bind(on_press=popup.dismiss)
+        popup.open()
+
+
+if __name__ == "__main__":
+    HackApp().run()
