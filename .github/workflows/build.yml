@@ -1,35 +1,28 @@
-name: Build Android APK
+name: Build APK
 
-on:
-  push:
-    branches: [ main ]
+on: [push]
 
 jobs:
   build:
     runs-on: ubuntu-latest
-
     steps:
-    - uses: actions/checkout@v3
-
-    - name: Set up Python
-      uses: actions/setup-python@v4
-      with:
-        python-version: '3.10'
-
-    - name: Install dependencies
-      run: |
-        sudo apt update
-        sudo apt install -y python3-pip git zip unzip openjdk-17-jdk
-
-    - name: Run Buildozer Build
-      uses: ArtemSBulgakov/buildozer-action@v1
-      id: buildozer
-      with:
-        command: buildozer -v android debug
-
-    - name: Upload APK
-      uses: actions/upload-artifact@v3
-      with:
-        name: package
-        path: bin/*.apk
-concurrency: 
+      - uses: actions/checkout@v3
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.10'
+      - name: Install Buildozer & Dependencies
+        run: |
+          sudo apt update
+          sudo apt install -y openjdk-17-jdk python3-pip git zip unzip autoconf libtool pkg-config zlib1g-dev libncurses5-dev libncursesw5-dev libsqlite3-dev libssl-dev libffi-dev libreadline-dev libbz2-dev
+          pip install --upgrade buildozer cython
+      - name: Build with Buildozer
+        run: |
+          buildozer init
+          sed -i 's/#requirements = python3,kivy/requirements = python3,tkinter/g' buildozer.spec
+          buildozer -v android debug
+      - name: Upload APK
+        uses: actions/upload-artifact@v3
+        with:
+          name: app-release
+          path: bin/*.apk
