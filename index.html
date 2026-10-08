@@ -3,154 +3,1345 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>محاكي الاختراق - للتسلية</title>
+<title>HACKER SIMULATOR - abdo saad</title>
+
 <style>
-  * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Segoe UI', Tahoma, sans-serif; }
-  body {
-    background: #0a0a0f;
-    color: #fff;
-    min-height: 100vh;
-    padding: 20px;
-    background-image: 
-      radial-gradient(circle at 20% 20%, rgba(138,43,226,0.15) 0%, transparent 50%),
-      radial-gradient(circle at 80% 80%, rgba(0,255,255,0.1) 0%, transparent 50%);
-  }
-  .container { max-width: 500px; margin: 0 auto; }
-  h1 {
-    text-align: center;
-    color: #b026ff;
-    font-size: 22px;
-    margin-bottom: 10px;
-    text-shadow: 0 0 15px #b026ff;
-  }
-  .warn {
-    text-align: center;
-    color: #ff3366;
-    font-size: 12px;
-    margin-bottom: 20px;
-  }
-  .card {
-    background: rgba(20, 20, 30, 0.8);
-    border: 1px solid #b026ff;
-    border-radius: 15px;
-    padding: 20px;
-    margin-bottom: 15px;
-    box-shadow: 0 0 20px rgba(176, 38, 255, 0.3);
-  }
-  label {
-    display: block;
-    color: #00ffff;
-    margin-bottom: 8px;
-    font-size: 14px;
-  }
-  input, select {
-    width: 100%;
-    padding: 12px;
-    background: #0a0a0f;
-    border: 1px solid #00ffff;
-    border-radius: 10px;
-    color: #fff;
-    font-size: 14px;
-    margin-bottom: 15px;
-  }
-  input:focus, select:focus { outline: none; border-color: #b026ff; }
-  button {
-    width: 100%;
-    padding: 15px;
-    background: linear-gradient(90deg, #0066ff, #b026ff);
-    border: none;
-    border-radius: 10px;
-    color: #fff;
-    font-size: 16px;
-    font-weight: bold;
-    cursor: pointer;
-    box-shadow: 0 0 20px rgba(176, 38, 255, 0.5);
-  }
-  button:active { transform: scale(0.98); }
-  #output {
-    background: #0a0a0f;
-    border: 1px solid #ff3366;
-    border-radius: 10px;
-    padding: 15px;
-    min-height: 100px;
-    color: #00ff88;
-    font-size: 13px;
-    line-height: 1.8;
-    white-space: pre-wrap;
-    display: none;
-  }
-  .footer {
-    text-align: center;
-    color: #666;
-    font-size: 11px;
-    margin-top: 20px;
-  }
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  background: #0a0a0a;
+  color: #00ff41;
+  font-family: 'Courier New', monospace;
+  min-height: 100vh;
+  padding: 15px;
+  overflow-x: hidden;
+  position: relative;
+}
+
+#matrixCanvas {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: -1;
+  opacity: 0.15;
+}
+
+#bootScreen {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: #000;
+  z-index: 9999;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  padding: 20px;
+  transition: opacity 0.8s;
+}
+
+#bootScreen.hidden {
+  opacity: 0;
+  pointer-events: none;
+}
+
+.boot-logo {
+  color: #00ff41;
+  font-size: 28px;
+  font-weight: bold;
+  text-shadow: 0 0 20px #00ff41;
+  margin-bottom: 30px;
+  text-align: center;
+}
+
+.boot-line {
+  color: #00ff41;
+  font-size: 13px;
+  margin: 4px 0;
+  text-align: right;
+  direction: rtl;
+  width: 100%;
+  max-width: 400px;
+  opacity: 0;
+  animation: fadeIn 0.4s forwards;
+}
+
+.boot-line.ok::after {
+  content: " [OK]";
+  color: #00ffff;
+}
+
+@keyframes fadeIn {
+  to { opacity: 1; }
+}
+
+.boot-progress {
+  width: 90%;
+  max-width: 400px;
+  height: 8px;
+  background: #111;
+  border: 1px solid #00ff41;
+  border-radius: 5px;
+  margin-top: 25px;
+  overflow: hidden;
+}
+
+.boot-progress-fill {
+  height: 100%;
+  background: linear-gradient(90deg, #00ff41, #00ffff);
+  width: 0%;
+  transition: width 0.3s;
+}
+
+.warning {
+  background: #ff0040;
+  color: #fff;
+  text-align: center;
+  padding: 8px;
+  font-weight: bold;
+  border-radius: 5px;
+  margin-bottom: 12px;
+  font-size: 12px;
+  position: relative;
+  z-index: 1;
+}
+
+.developer-card {
+  background: linear-gradient(135deg, #001a1a, #003333);
+  border: 2px solid #00ffff;
+  border-radius: 10px;
+  padding: 12px;
+  margin-bottom: 15px;
+  text-align: center;
+  box-shadow: 0 0 20px rgba(0,255,255,0.4);
+  position: relative;
+  z-index: 1;
+}
+
+.developer-card .label {
+  color: #00ffff;
+  font-size: 11px;
+  letter-spacing: 2px;
+}
+
+.developer-card .name {
+  color: #00ff41;
+  font-size: 20px;
+  font-weight: bold;
+  text-shadow: 0 0 10px #00ff41;
+  margin: 6px 0;
+}
+
+.contact-btn {
+  background: linear-gradient(135deg, #00ffff, #0088aa) !important;
+  color: #000 !important;
+  border: 2px solid #00ffff !important;
+  font-size: 14px;
+  padding: 10px !important;
+  width: 100%;
+  border-radius: 8px;
+  font-family: 'Courier New', monospace;
+  font-weight: bold;
+  cursor: pointer;
+  margin-top: 5px;
+}
+
+h1 {
+  text-align: center;
+  color: #00ff41;
+  text-shadow: 0 0 12px #00ff41;
+  margin-bottom: 15px;
+  font-size: 18px;
+  position: relative;
+  z-index: 1;
+}
+
+.status {
+  background: rgba(17,17,17,0.9);
+  border: 2px solid #00ff41;
+  border-radius: 8px;
+  padding: 12px;
+  margin-bottom: 12px;
+  position: relative;
+  z-index: 1;
+}
+
+.status-row {
+  display: flex;
+  justify-content: space-between;
+  padding: 5px 0;
+  border-bottom: 1px solid #1a3a1a;
+  font-size: 12px;
+}
+
+.status-row:last-child {
+  border-bottom: none;
+}
+
+.status-row span:first-child {
+  color: #888;
+}
+
+.status-row span:last-child {
+  color: #00ff41;
+  font-weight: bold;
+}
+
+.progress-bar {
+  width: 100%;
+  height: 16px;
+  background: #111;
+  border: 1px solid #00ff41;
+  border-radius: 8px;
+  overflow: hidden;
+  margin: 8px 0;
+}
+
+.progress-fill {
+  height: 100%;
+  background: linear-gradient(90deg, #00ff41, #00ffff);
+  width: 0%;
+  transition: width 0.3s;
+}
+
+.wave-container {
+  background: rgba(0,0,0,0.8);
+  border: 2px solid #00ff41;
+  border-radius: 8px;
+  padding: 8px;
+  margin-bottom: 12px;
+  height: 80px;
+  overflow: hidden;
+  position: relative;
+  z-index: 1;
+}
+
+#waveCanvas {
+  width: 100%;
+  height: 100%;
+  display: block;
+}
+
+.btn-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 8px;
+  margin-bottom: 10px;
+  position: relative;
+  z-index: 1;
+}
+
+.btn-grid button {
+  margin: 0;
+}
+
+button {
+  width: 100%;
+  padding: 12px 8px;
+  background: linear-gradient(135deg, #001a00, #003300);
+  color: #00ff41;
+  border: 2px solid #00ff41;
+  border-radius: 8px;
+  font-family: 'Courier New', monospace;
+  font-size: 13px;
+  font-weight: bold;
+  cursor: pointer;
+  transition: all 0.2s;
+  position: relative;
+  z-index: 1;
+}
+
+button:active {
+  background: #00ff41;
+  color: #000;
+  box-shadow: 0 0 20px #00ff41;
+  transform: scale(0.97);
+}
+
+button:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
+.danger-btn {
+  border-color: #ff0040 !important;
+  color: #ff0040 !important;
+}
+
+.danger-btn:active {
+  background: #ff0040 !important;
+  color: #000 !important;
+  box-shadow: 0 0 20px #ff0040 !important;
+}
+
+.link-box {
+  display: none;
+  background: rgba(0,20,0,0.95);
+  border: 2px solid #00ff41;
+  border-radius: 8px;
+  padding: 12px;
+  margin: 10px 0;
+  position: relative;
+  z-index: 2;
+}
+
+.link-title {
+  color: #00ffff;
+  text-align: center;
+  margin-bottom: 10px;
+  font-weight: bold;
+}
+
+.link-input {
+  width: 100%;
+  padding: 10px;
+  background: #000;
+  color: #00ff41;
+  border: 1px solid #00ff41;
+  border-radius: 6px;
+  font-family: monospace;
+  outline: none;
+}
+
+.generated-link {
+  margin-top: 10px;
+  padding: 10px;
+  background: #000;
+  border: 1px solid #00ffff;
+  border-radius: 6px;
+  color: #00ffff;
+  word-break: break-all;
+  text-align: center;
+  font-size: 12px;
+}
+
+.terminal {
+  background: rgba(0,0,0,0.95);
+  border: 2px solid #00ff41;
+  border-radius: 8px;
+  padding: 12px;
+  height: 200px;
+  overflow-y: auto;
+  font-size: 11px;
+  line-height: 1.5;
+  position: relative;
+  z-index: 1;
+}
+
+.terminal p {
+  margin-bottom: 3px;
+  color: #00ff41;
+}
+
+.terminal .error {
+  color: #ff0040;
+}
+
+.terminal .info {
+  color: #00ffff;
+}
+
+.terminal .warn {
+  color: #ffff00;
+}
+
+.terminal .success {
+  color: #00ff41;
+  font-weight: bold;
+}
+
+.cursor {
+  display: inline-block;
+  width: 7px;
+  height: 12px;
+  background: #00ff41;
+  animation: blink 1s infinite;
+  vertical-align: middle;
+}
+
+@keyframes blink {
+  0%, 50% { opacity: 1; }
+  51%, 100% { opacity: 0; }
+}
+
+.footer {
+  text-align: center;
+  color: #666;
+  font-size: 10px;
+  margin-top: 15px;
+  padding: 8px;
+  border-top: 1px solid #222;
+  position: relative;
+  z-index: 1;
+}
+
+.footer .dev-name {
+  color: #00ffff;
+  font-weight: bold;
+}
 </style>
 </head>
+
 <body>
-<div class="container">
-  <h1>⚡ نظام محاكاة الاختراق ⚡</h1>
-  <p class="warn">⚠ للتسلية فقط - لا يقوم بأي اختراق حقيقي ⚠</p>
 
-  <div class="card">
-    <label>📱 أدخل رقم الهاتف:</label>
-    <input type="tel" id="phone" placeholder="+20xxxxxxxxxx">
+<canvas id="matrixCanvas"></canvas>
 
-    <label>📲 نوع الجهاز (اختياري):</label>
-    <select id="device">
-      <option>Android Device</option>
-      <option>iPhone</option>
-      <option>Samsung</option>
-    </select>
+<div id="bootScreen">
+  <div class="boot-logo">&lt;/&gt; SYSTEM BOOTING</div>
+  <div id="bootLines"></div>
 
-    <label>🎯 طريقة الاختراق:</label>
-    <select id="method">
-      <option>ثغرات واتساب</option>
-      <option>تليجرام</option>
-      <option>اختراق مباشر</option>
-    </select>
+  <div class="boot-progress">
+    <div class="boot-progress-fill" id="bootProgress"></div>
+  </div>
+</div>
 
-    <button onclick="generate()">⚡ توليد روابط الاختراق</button>
+<div class="warning">
+ هذا الأداء اغراض تعليمية فقط أنا لن مسؤول عن لأي أشياء خاطئ اللتحمل المسؤولية
+</div>
+
+<div class="developer-card">
+  <div class="label">// DEVELOPER //</div>
+  <div class="name">abdo saad</div>
+
+  <button class="contact-btn" onclick="contactDev()">
+    💬 تواصل مع المطور
+  </button>
+</div>
+
+<h1>&lt;/&gt; HACKER SIMULATOR v2.0</h1>
+
+<div class="status">
+
+  <div class="status-row">
+    <span>الحالة:</span>
+    <span id="status">جاهز</span>
   </div>
 
-  <div class="card" id="output"></div>
+  <div class="status-row">
+    <span>الوقت:</span>
+    <span id="timer">00:00:00</span>
+  </div>
 
-  <p class="footer">هذا التطبيق للتسلية فقط - كل النتائج وهمية</p>
+  <div class="status-row">
+    <span>IP تجريبي:</span>
+    <span id="fakeIP">0.0.0.0</span>
+  </div>
+
+  <div class="status-row">
+    <span>مستوى التشفير:</span>
+    <span id="encLevel">0%</span>
+  </div>
+
+  <div class="progress-bar">
+    <div class="progress-fill" id="progressFill"></div>
+  </div>
+
+</div>
+
+<div class="wave-container">
+  <canvas id="waveCanvas"></canvas>
+</div>
+
+<div class="btn-grid">
+
+  <button onclick="runScan()">🔍 مسح الشبكة</button>
+
+  <button onclick="runAnalyze()">📊 تحليل الحزم</button>
+
+  <button onclick="runTrace()">📍 تتبع الموقع</button>
+
+  <button onclick="runEncrypt()">🔐 تشفير البيانات</button>
+
+  <button onclick="runConnect()">🌐 اتصال السيرفر</button>
+
+  <button onclick="clearTerminal()">🗑️ مسح السجل</button>
+
+  <button onclick="downloadImages()">🖼 سحب صور</button>
+
+  <button onclick="fullDeviceControl()">📱 تحكم الجهاز بالكامل</button>
+
+  <button onclick="generateFakeLink()">🔗 توليد رابط</button>
+
+</div>
+
+<div class="link-box" id="linkBox">
+
+  <div class="link-title">
+    🔗 مولد رابط تجريبي
+  </div>
+
+  <input
+    id="targetNumber"
+    class="link-input"
+    type="text"
+    inputmode="numeric"
+    placeholder="اكتب رقمًا تجريبيًا"
+  >
+
+  <button onclick="createFakeLink()" style="margin-top:8px;">
+    ⚡ توليد الرابط
+  </button>
+
+  <div id="generatedLink" class="generated-link">
+    لم يتم توليد رابط بعد
+  </div>
+
+</div>
+
+<button class="danger-btn" onclick="shutdown()">
+  ⛔ إيقاف النظام
+</button>
+
+<div class="terminal" id="terminal">
+
+  <p class="info">
+    [SYSTEM] المحاكاة جاهزة...
+  </p>
+
+  <p class="warn">
+    [WARN] جميع العمليات داخل هذا البرنامج لاختراق الأخلاق .
+  </p>
+
+  <p>
+    [ROOT]# <span class="cursor"></span>
+  </p>
+
+</div>
+
+<div class="footer">
+
+  <div>
+    المطوّر:
+    <span class="dev-name">abdo saad</span>
+  </div>
+
+  <div style="margin-top:5px;">
+    محاكاة تعليمية | 2026
+  </div>
+
 </div>
 
 <script>
-function generate() {
-  const phone = document.getElementById('phone').value;
-  const device = document.getElementById('device').value;
-  const method = document.getElementById('method').value;
-  const out = document.getElementById('output');
-  
-  if (!phone) {
-    out.style.display = 'block';
-    out.style.color = '#ff3366';
-    out.textContent = '❌ الرجاء إدخال رقم الهاتف';
+
+/* =========================
+   إقلاع النظام
+========================= */
+
+const bootLines = [
+  "تهيئة النظام...",
+  "تحميل الوحدات الأساسية...",
+  "فحص الذاكرة...",
+  "تهيئة بيئة المحاكاة...",
+  "تحميل الواجهة...",
+  "تفعيل الوضع التعليمي...",
+  "جاهز للعمل"
+];
+
+const bootLinesDiv =
+  document.getElementById("bootLines");
+
+const bootProgress =
+  document.getElementById("bootProgress");
+
+let bootIndex = 0;
+
+const bootInterval = setInterval(() => {
+
+  if (bootIndex >= bootLines.length) {
+
+    clearInterval(bootInterval);
+
+    setTimeout(() => {
+
+      document
+        .getElementById("bootScreen")
+        .classList.add("hidden");
+
+    }, 500);
+
     return;
   }
-  
-  out.style.display = 'block';
-  out.style.color = '#00ff88';
-  out.textContent = '⏳ جاري الاتصال بالسيرفرات...';
-  
-  setTimeout(() => {
-    out.textContent = '🔓 جاري فك التشفير...';
-  }, 800);
-  
-  setTimeout(() => {
-    out.textContent = 
-      '✅ تم الاختراق بنجاح (وهمي)\n\n' +
-      '📱 الهدف: ' + phone + '\n' +
-      '💻 الجهاز: ' + device + '\n' +
-      '🎯 الطريقة: ' + method + '\n' +
-      '📊 حالة التشفير: 100%\n\n' +
-      '⚠ ملاحظة: هذه محاكاة للتسلية فقط\n' +
-      'لا يوجد أي اختراق حقيقي.';
-  }, 2000);
+
+  const line =
+    document.createElement("div");
+
+  line.className = "boot-line ok";
+
+  line.textContent =
+    bootLines[bootIndex];
+
+  bootLinesDiv.appendChild(line);
+
+  bootProgress.style.width =
+    ((bootIndex + 1) /
+    bootLines.length * 100) + "%";
+
+  bootIndex++;
+
+}, 400);
+
+
+/* =========================
+   Matrix
+========================= */
+
+const matrixCanvas =
+  document.getElementById("matrixCanvas");
+
+const mCtx =
+  matrixCanvas.getContext("2d");
+
+function resizeMatrix() {
+
+  matrixCanvas.width =
+    window.innerWidth;
+
+  matrixCanvas.height =
+    window.innerHeight;
 }
+
+resizeMatrix();
+
+window.addEventListener(
+  "resize",
+  resizeMatrix
+);
+
+const chars =
+  "01アイウエオカキクケコABCDEF<>{}[]/\\";
+
+const fontSize = 14;
+
+let columns =
+  matrixCanvas.width / fontSize;
+
+let drops =
+  Array(Math.floor(columns)).fill(1);
+
+function drawMatrix() {
+
+  mCtx.fillStyle =
+    "rgba(0, 0, 0, 0.05)";
+
+  mCtx.fillRect(
+    0,
+    0,
+    matrixCanvas.width,
+    matrixCanvas.height
+  );
+
+  mCtx.fillStyle =
+    "#00ff41";
+
+  mCtx.font =
+    fontSize + "px monospace";
+
+  for (
+    let i = 0;
+    i < drops.length;
+    i++
+  ) {
+
+    const text =
+      chars[
+        Math.floor(
+          Math.random() * chars.length
+        )
+      ];
+
+    mCtx.fillText(
+      text,
+      i * fontSize,
+      drops[i] * fontSize
+    );
+
+    if (
+      drops[i] * fontSize >
+      matrixCanvas.height &&
+      Math.random() > 0.975
+    ) {
+      drops[i] = 0;
+    }
+
+    drops[i]++;
+  }
+}
+
+setInterval(drawMatrix, 50);
+
+
+/* =========================
+   Wave
+========================= */
+
+const waveCanvas =
+  document.getElementById("waveCanvas");
+
+const wCtx =
+  waveCanvas.getContext("2d");
+
+function resizeWave() {
+
+  waveCanvas.width =
+    waveCanvas.offsetWidth;
+
+  waveCanvas.height =
+    waveCanvas.offsetHeight;
+}
+
+resizeWave();
+
+window.addEventListener(
+  "resize",
+  resizeWave
+);
+
+let waveOffset = 0;
+
+function drawWave() {
+
+  wCtx.clearRect(
+    0,
+    0,
+    waveCanvas.width,
+    waveCanvas.height
+  );
+
+  wCtx.strokeStyle =
+    "#00ff41";
+
+  wCtx.lineWidth = 1.5;
+
+  wCtx.beginPath();
+
+  for (
+    let x = 0;
+    x < waveCanvas.width;
+    x++
+  ) {
+
+    const y =
+      waveCanvas.height / 2 +
+      Math.sin(
+        (x + waveOffset) * 0.05
+      ) * 20 +
+      Math.sin(
+        (x + waveOffset) * 0.12
+      ) * 8;
+
+    if (x === 0) {
+      wCtx.moveTo(x, y);
+    } else {
+      wCtx.lineTo(x, y);
+    }
+  }
+
+  wCtx.stroke();
+
+  waveOffset += 2;
+}
+
+setInterval(drawWave, 30);
+
+
+/* =========================
+   العناصر
+========================= */
+
+const terminal =
+  document.getElementById("terminal");
+
+const status =
+  document.getElementById("status");
+
+const fakeIP =
+  document.getElementById("fakeIP");
+
+const encLevel =
+  document.getElementById("encLevel");
+
+const timerEl =
+  document.getElementById("timer");
+
+const progressFill =
+  document.getElementById("progressFill");
+
+
+/* =========================
+   Timer
+========================= */
+
+let startTime = Date.now();
+
+setInterval(() => {
+
+  const el =
+    Math.floor(
+      (Date.now() - startTime) / 1000
+    );
+
+  const h =
+    String(
+      Math.floor(el / 3600)
+    ).padStart(2, "0");
+
+  const m =
+    String(
+      Math.floor((el % 3600) / 60)
+    ).padStart(2, "0");
+
+  const s =
+    String(el % 60)
+    .padStart(2, "0");
+
+  timerEl.textContent =
+    `${h}:${m}:${s}`;
+
+}, 1000);
+
+
+/* =========================
+   Fake IP
+========================= */
+
+function newIP() {
+
+  fakeIP.textContent =
+    `${Math.floor(Math.random() * 255)}.` +
+    `${Math.floor(Math.random() * 255)}.` +
+    `${Math.floor(Math.random() * 255)}.` +
+    `${Math.floor(Math.random() * 255)}`;
+}
+
+setInterval(newIP, 3000);
+
+newIP();
+
+
+/* =========================
+   Terminal
+========================= */
+
+function log(text, type = "") {
+
+  const p =
+    document.createElement("p");
+
+  if (type) {
+    p.className = type;
+  }
+
+  p.textContent = text;
+
+  terminal.appendChild(p);
+
+  terminal.scrollTop =
+    terminal.scrollHeight;
+}
+
+function sleep(ms) {
+
+  return new Promise(
+    resolve => setTimeout(resolve, ms)
+  );
+}
+
+function setProgress(v) {
+
+  progressFill.style.width =
+    v + "%";
+}
+
+function disableButtons(state) {
+
+  document
+    .querySelectorAll("button")
+    .forEach(btn => {
+      btn.disabled = state;
+    });
+}
+
+
+/* =========================
+   Scan
+========================= */
+
+async function runScan() {
+
+  disableButtons(true);
+
+  status.textContent =
+    "جارٍ المحاكاة...";
+
+  log(
+    "[SCAN] بدء تحكم فحص الشبكة ...",
+    "info"
+  );
+
+  for (
+    let i = 10;
+    i <= 100;
+    i += 10
+  ) {
+
+    await sleep(180);
+
+    setProgress(i);
+
+    log(
+      `[SCAN] فحص الثغرات ... ${i}%`
+    );
+  }
+
+  const fakeDevices =
+    Math.floor(Math.random() * 5) + 1;
+
+  log(
+    `[SCAN] تم العثور على ${fakeDevices} اجهزة حقيقية `,
+    "warn"
+  );
+
+  log(
+    "[SCAN] انتهت المحاكاة",
+    "info"
+  );
+
+  status.textContent = "جاهز";
+
+  setProgress(0);
+
+  disableButtons(false);
+}
+
+
+/* =========================
+   Analyze
+========================= */
+
+async function runAnalyze() {
+
+  disableButtons(true);
+
+  status.textContent =
+    "جارٍ التحليل...";
+
+  log(
+    "[ANALYZE] بدء تحليل تجريبي للحزم...",
+    "info"
+  );
+
+  const packets = [
+    "TCP",
+    "UDP",
+    "HTTP",
+    "DNS",
+    "ICMP",
+    "HTTPS"
+  ];
+
+  for (
+    let i = 1;
+    i <= 8;
+    i++
+  ) {
+
+    await sleep(220);
+
+    const pkt =
+      packets[
+        Math.floor(
+          Math.random() *
+          packets.length
+        )
+      ];
+
+    log(
+      `[ANALYZE] حزمة ${pkt} #${i}`
+    );
+
+    setProgress(
+      Math.floor(i / 8 * 100)
+    );
+  }
+
+  log(
+    "[ANALYZE] انتهت المحاكاة",
+    "info"
+  );
+
+  status.textContent = "جاهز";
+
+  setProgress(0);
+
+  disableButtons(false);
+}
+
+
+/* =========================
+   Trace
+========================= */
+
+async function runTrace() {
+
+  disableButtons(true);
+
+  status.textContent =
+    "جار التتبع الفحص ...";
+
+  log(
+    "[TRACE] بدء محاكاة تتبع...",
+    "info"
+  );
+
+  const fakeLocations = [
+    "القاهرة، مصر",
+    "الجيزة، مصر",
+    "الإسكندرية، مصر"
+  ];
+
+  for (
+    let i = 0;
+    i < fakeLocations.length;
+    i++
+  ) {
+
+    await sleep(500);
+
+    log(
+      `[TRACE] موقع اخلاقي : ${fakeLocations[i]}`
+    );
+
+    setProgress(
+      (i + 1) * 33
+    );
+  }
+
+  log(
+    "[TRACE] انتهت المحاكاة",
+    "warn"
+  );
+
+  status.textContent = "جاهز";
+
+  setProgress(0);
+
+  disableButtons(false);
+}
+
+
+/* =========================
+   Encryption
+========================= */
+
+async function runEncrypt() {
+
+  disableButtons(true);
+
+  status.textContent =
+    "جارٍ التشفير التجريبي...";
+
+  log(
+    "[ENCRYPT] بدء محاكاة التشفير...",
+    "info"
+  );
+
+  for (
+    let i = 0;
+    i <= 100;
+    i += 5
+  ) {
+
+    await sleep(80);
+
+    encLevel.textContent =
+      i + "%";
+
+    setProgress(i);
+  }
+
+  log(
+    "[ENCRYPT] انتهت المحاكاة بنجاح",
+    "success"
+  );
+
+  status.textContent = "جاهز";
+
+  setProgress(0);
+
+  disableButtons(false);
+}
+
+
+/* =========================
+   Server
+========================= */
+
+async function runConnect() {
+
+  disableButtons(true);
+
+  status.textContent =
+    "جارٍ الاتصال التجريبي...";
+
+  log(
+    "[NET] بدء اتصال تجريبي...",
+    "info"
+  );
+
+  const steps = [
+    "DNS Lookup",
+    "Handshake",
+    "Authentication",
+    "Secure Channel"
+  ];
+
+  for (
+    let i = 0;
+    i < steps.length;
+    i++
+  ) {
+
+    await sleep(400);
+
+    log(
+      `[NET] ${steps[i]}... OK`
+    );
+
+    setProgress(
+      (i + 1) * 25
+    );
+  }
+
+  log(
+    "[NET] الاتصال ناجح — محاكاة فقط",
+    "success"
+  );
+
+  status.textContent = "متصل";
+
+  setProgress(0);
+
+  disableButtons(false);
+}
+
+
+/* =========================
+   Clear
+========================= */
+
+function clearTerminal() {
+
+  terminal.innerHTML =
+    '<p class="info">[SYSTEM] تم مسح السجل.</p>';
+
+  setProgress(0);
+}
+
+
+/* =========================
+   Images Simulation
+========================= */
+
+function downloadImages() {
+
+  log(
+    "[IMAGES] سحب الصور — محاكاة فقط",
+    "info"
+  );
+
+  log(
+    "[IMAGES]تم الوصول الى تحكم الجهاز بالكامل .",
+    "warn"
+  );
+}
+
+
+/* =========================
+   Device Simulation
+========================= */
+
+function fullDeviceControl() {
+
+  log(
+    "[DEVICE] تحكم الجهاز بالكامل — محاكاة فقط",
+    "info"
+  );
+
+  log(
+    "[DEVICE] كشف الثغرات الخبيثة .",
+    "warn"
+  );
+}
+
+
+/* =========================
+   Fake Link Generator
+========================= */
+
+function generateFakeLink() {
+
+  const box =
+    document.getElementById("linkBox");
+
+  box.style.display = "block";
+
+  document
+    .getElementById("targetNumber")
+    .focus();
+
+  log(
+    "[LINK] تم فتح مولد الرابط الخبيث 😈 .",
+    "info"
+  );
+}
+
+
+function createFakeLink() {
+
+  const number =
+    document
+      .getElementById("targetNumber")
+      .value
+      .trim();
+
+  const output =
+    document.getElementById("generatedLink");
+
+  if (!number) {
+
+    output.textContent =
+      "⚠️ اكتب رقمًا تجريبيًا أولاً";
+
+    return;
+  }
+
+  const fakeId =
+    Math.random()
+      .toString(36)
+      .substring(2, 10);
+
+  const fakeLink =
+    "https://example.com/demo/" +
+    fakeId;
+
+  output.innerHTML =
+    "الرابط التجريبي:<br><br>" +
+    "<strong>" +
+    fakeLink +
+    "</strong>";
+
+  log(
+    "[LINK] تم توليد رابط تجريبي للرقم: " +
+    number,
+    "success"
+  );
+
+  log(
+    "[LINK] الرابط بيتم الوصول جميع الأجهزة ",
+    "warn"
+  );
+}
+
+
+/* =========================
+   Shutdown
+========================= */
+
+function shutdown() {
+
+  log(
+    "[SYSTEM] إيقاف...",
+    "error"
+  );
+
+  setTimeout(() => {
+
+    document.body.style.background =
+      "#000";
+
+    document.body.innerHTML = `
+
+      <div style="
+        display:flex;
+        justify-content:center;
+        align-items:center;
+        height:100vh;
+        color:#00ff41;
+        font-family:monospace;
+        flex-direction:column;
+        text-align:center;
+        padding:20px;
+      ">
+
+        <div style="
+          font-size:24px;
+          text-shadow:0 0 15px #00ff41;
+        ">
+          SYSTEM OFFLINE
+        </div>
+
+        <div style="
+          margin-top:20px;
+          font-size:14px;
+          color:#666;
+        ">
+          محاكاة تعليمية — abdo saad
+        </div>
+
+        <button
+          onclick="location.reload()"
+          style="
+            margin-top:30px;
+            padding:12px 30px;
+            background:#001a00;
+            color:#00ff41;
+            border:2px solid #00ff41;
+            border-radius:8px;
+            font-family:monospace;
+            font-size:14px;
+            cursor:pointer;
+          "
+        >
+          🔄 إعادة تشغيل
+        </button>
+
+      </div>
+    `;
+
+  }, 800);
+}
+
+
+/* =========================
+   Contact Developer
+========================= */
+
+function contactDev() {
+
+  const phone =
+    "201223862890";
+
+  const message =
+    "مرحباً، أتواصل بخصوص تطبيق المحاكاة التعليمية.";
+
+  const url =
+    "https://wa.me/" +
+    phone +
+    "?text=" +
+    encodeURIComponent(message);
+
+  window.location.href = url;
+}
+
 </script>
+
 </body>
-</html>
+ </html>
