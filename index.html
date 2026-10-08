@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>محاكي الاختراق - للتسلية</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Segoe UI', Tahoma, sans-serif; }
+  body {
+    background: #0a0a0f;
+    color: #fff;
+    min-height: 100vh;
+    padding: 20px;
+    background-image: 
+      radial-gradient(circle at 20% 20%, rgba(138,43,226,0.15) 0%, transparent 50%),
+      radial-gradient(circle at 80% 80%, rgba(0,255,255,0.1) 0%, transparent 50%);
+  }
+  .container { max-width: 500px; margin: 0 auto; }
+  h1 {
+    text-align: center;
+    color: #b026ff;
+    font-size: 22px;
+    margin-bottom: 10px;
+    text-shadow: 0 0 15px #b026ff;
+  }
+  .warn {
+    text-align: center;
+    color: #ff3366;
+    font-size: 12px;
+    margin-bottom: 20px;
+  }
+  .card {
+    background: rgba(20, 20, 30, 0.8);
+    border: 1px solid #b026ff;
+    border-radius: 15px;
+    padding: 20px;
+    margin-bottom: 15px;
+    box-shadow: 0 0 20px rgba(176, 38, 255, 0.3);
+  }
+  label {
+    display: block;
+    color: #00ffff;
+    margin-bottom: 8px;
+    font-size: 14px;
+  }
+  input, select {
+    width: 100%;
+    padding: 12px;
+    background: #0a0a0f;
+    border: 1px solid #00ffff;
+    border-radius: 10px;
+    color: #fff;
+    font-size: 14px;
+    margin-bottom: 15px;
+  }
+  input:focus, select:focus { outline: none; border-color: #b026ff; }
+  button {
+    width: 100%;
+    padding: 15px;
+    background: linear-gradient(90deg, #0066ff, #b026ff);
+    border: none;
+    border-radius: 10px;
+    color: #fff;
+    font-size: 16px;
+    font-weight: bold;
+    cursor: pointer;
+    box-shadow: 0 0 20px rgba(176, 38, 255, 0.5);
+  }
+  button:active { transform: scale(0.98); }
+  #output {
+    background: #0a0a0f;
+    border: 1px solid #ff3366;
+    border-radius: 10px;
+    padding: 15px;
+    min-height: 100px;
+    color: #00ff88;
+    font-size: 13px;
+    line-height: 1.8;
+    white-space: pre-wrap;
+    display: none;
+  }
+  .footer {
+    text-align: center;
+    color: #666;
+    font-size: 11px;
+    margin-top: 20px;
+  }
+</style>
+</head>
+<body>
+<div class="container">
+  <h1>⚡ نظام محاكاة الاختراق ⚡</h1>
+  <p class="warn">⚠ للتسلية فقط - لا يقوم بأي اختراق حقيقي ⚠</p>
+
+  <div class="card">
+    <label>📱 أدخل رقم الهاتف:</label>
+    <input type="tel" id="phone" placeholder="+20xxxxxxxxxx">
+
+    <label>📲 نوع الجهاز (اختياري):</label>
+    <select id="device">
+      <option>Android Device</option>
+      <option>iPhone</option>
+      <option>Samsung</option>
+    </select>
+
+    <label>🎯 طريقة الاختراق:</label>
+    <select id="method">
+      <option>ثغرات واتساب</option>
+      <option>تليجرام</option>
+      <option>اختراق مباشر</option>
+    </select>
+
+    <button onclick="generate()">⚡ توليد روابط الاختراق</button>
+  </div>
+
+  <div class="card" id="output"></div>
+
+  <p class="footer">هذا التطبيق للتسلية فقط - كل النتائج وهمية</p>
+</div>
+
+<script>
+function generate() {
+  const phone = document.getElementById('phone').value;
+  const device = document.getElementById('device').value;
+  const method = document.getElementById('method').value;
+  const out = document.getElementById('output');
+  
+  if (!phone) {
+    out.style.display = 'block';
+    out.style.color = '#ff3366';
+    out.textContent = '❌ الرجاء إدخال رقم الهاتف';
+    return;
+  }
+  
+  out.style.display = 'block';
+  out.style.color = '#00ff88';
+  out.textContent = '⏳ جاري الاتصال بالسيرفرات...';
+  
+  setTimeout(() => {
+    out.textContent = '🔓 جاري فك التشفير...';
+  }, 800);
+  
+  setTimeout(() => {
+    out.textContent = 
+      '✅ تم الاختراق بنجاح (وهمي)\n\n' +
+      '📱 الهدف: ' + phone + '\n' +
+      '💻 الجهاز: ' + device + '\n' +
+      '🎯 الطريقة: ' + method + '\n' +
+      '📊 حالة التشفير: 100%\n\n' +
+      '⚠ ملاحظة: هذه محاكاة للتسلية فقط\n' +
+      'لا يوجد أي اختراق حقيقي.';
+  }, 2000);
+}
+</script>
+</body>
+</html>
