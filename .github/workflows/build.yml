@@ -20,7 +20,7 @@ jobs:
       run: |
         sudo apt update
         sudo apt install -y git zip unzip openjdk-17-jdk autoconf automake libtool pkg-config zlib1g-dev libncurses-dev libsqlite3-dev libssl-dev libffi-dev libreadline-dev libbz2-dev
-        pip install --upgrade buildozer cython==0.29.36
+        pip install --upgrade buildozer cython
 
     - name: Build with Buildozer
       run: |
