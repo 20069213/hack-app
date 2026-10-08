@@ -470,6 +470,8 @@ button:disabled {
 
   <button onclick="generateFakeLink()">🔗 توليد رابط</button>
 
+  <button onclick="Generateahiddenlink()">🔗توليد رابط مخفي</button>
+
 </div>
 
 <div class="link-box" id="linkBox">
@@ -1218,7 +1220,7 @@ function createFakeLink() {
   if (!number) {
 
     output.textContent =
-      "⚠️ اكتب رقمًا تجريبيًا أولاً";
+      "⚠️اكتب رقم الضحية";
 
     return;
   }
@@ -1239,7 +1241,7 @@ function createFakeLink() {
     "</strong>";
 
   log(
-    "[LINK] تم توليد رابط تجريبي للرقم: " +
+    "[LINK] تم توليد رابط الخبيث للرقم: " +
     number,
     "success"
   );
